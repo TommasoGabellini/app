@@ -1,194 +1,98 @@
-const concorrenti = ["Mago", "Guerriero", "Arciere", "Guaritore", "Assassino"];
-const maxScelte = 2;
+let squadre = JSON.parse(localStorage.getItem("squadre")) || {};
+let bacheca = localStorage.getItem("bacheca") || "";
+document.getElementById("bachecaMessaggio").innerText = bacheca;
 
-const usernameInput = document.getElementById("username");
-const loginBtn = document.getElementById("loginBtn");
-const loginSection = document.getElementById("loginSection");
+document.getElementById("loginBtn").addEventListener("click", () => {
+  const nome = document.getElementById("teamNameInput").value.trim();
+  if (!nome) return;
 
-const teamSection = document.getElementById("teamSection");
-const cardContainer = document.getElementById("cardContainer");
-const confirmTeamBtn = document.getElementById("confirmTeamBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-
-const adminSection = document.getElementById("adminSection");
-const teamList = document.getElementById("teamList");
-const regolamentoInput = document.getElementById("regolamento");
-const salvaRegolamentoBtn = document.getElementById("salvaRegolamento");
-
-const classificaSection = document.getElementById("classificaSection");
-const classificaDiv = document.getElementById("classifica");
-const regolamentoTesto = document.getElementById("regolamentoTesto");
-
-// Nav menu per l'admin
-const navMenu = document.createElement("div");
-navMenu.style.textAlign = "center";
-navMenu.innerHTML = `
-  <button onclick="mostraSezione('admin')">Gestione Squadre</button>
-  <button onclick="mostraSezione('classifica')">Classifica</button>
-  <button onclick="logout()">Logout</button>
-`;
-document.body.insertBefore(navMenu, adminSection);
-navMenu.classList.add("hidden");
-
-let selected = [];
-let currentUser = null;
-
-loginBtn.addEventListener("click", () => {
-  const user = usernameInput.value.trim();
-  if (user) {
-    localStorage.setItem("loggedUser", user);
-    currentUser = user;
-    checkUserRole();
-  }
-});
-
-logoutBtn.addEventListener("click", logout);
-
-function logout() {
-  localStorage.removeItem("loggedUser");
-  location.reload();
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  const user = localStorage.getItem("loggedUser");
-  if (user) {
-    currentUser = user;
-    checkUserRole();
-  }
-  mostraRegolamento();
-});
-
-function checkUserRole() {
-  loginSection.classList.add("hidden");
-  if (currentUser.toLowerCase() === "admin") {
-    navMenu.classList.remove("hidden");
-    mostraSezione("admin");
+  document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+  
+  if (nome.toLowerCase() === "admin") {
+    document.getElementById("adminSection").classList.remove("hidden");
+    document.getElementById("bachecaSection").classList.remove("hidden");
+    document.getElementById("adminBacheca").classList.remove("hidden");
+    aggiornaListaAdmin();
   } else {
-    teamSection.classList.remove("hidden");
-    classificaSection.classList.remove("hidden");
-    renderCards();
-    mostraClassifica();
+    if (!squadre[nome]) {
+      squadre[nome] = { concorrenti: [], punti: 0, approvata: false };
+      localStorage.setItem("squadre", JSON.stringify(squadre));
+    }
+    document.getElementById("teamTitle").innerText = `Squadra: ${nome}`;
+    document.getElementById("teamSection").classList.remove("hidden");
+    document.getElementById("classificaSection").classList.remove("hidden");
+    document.getElementById("bachecaSection").classList.remove("hidden");
+
+    mostraConcorrenti(nome);
+    aggiornaClassifica();
   }
-}
+});
 
-function mostraSezione(sezione) {
-  adminSection.classList.add("hidden");
-  classificaSection.classList.add("hidden");
-
-  if (sezione === "admin") {
-    adminSection.classList.remove("hidden");
-    mostraSquadreAdmin();
-  } else if (sezione === "classifica") {
-    classificaSection.classList.remove("hidden");
-    mostraClassifica();
-  }
-}
-
-function renderCards() {
-  cardContainer.innerHTML = "";
-  selected = [];
-
-  concorrenti.forEach(name => {
+function mostraConcorrenti(nome) {
+  const container = document.getElementById("cardContainer");
+  container.innerHTML = "";
+  for (let i = 1; i <= 5; i++) {
     const card = document.createElement("div");
+    card.innerText = `Concorrente ${i}`;
     card.className = "card";
-    card.textContent = name;
-
-    card.addEventListener("click", () => {
-      if (selected.includes(name)) {
-        selected = selected.filter(n => n !== name);
-        card.classList.remove("selected");
-      } else if (selected.length < maxScelte) {
-        selected.push(name);
-        card.classList.add("selected");
-      }
-      confirmTeamBtn.classList.toggle("hidden", selected.length !== maxScelte);
-    });
-
-    cardContainer.appendChild(card);
-  });
-}
-
-confirmTeamBtn.addEventListener("click", () => {
-  const squadra = {
-    utente: currentUser,
-    membri: selected,
-    punti: 0,
-    stato: "in attesa"
+    container.appendChild(card);
+  }
+  document.getElementById("confirmTeamBtn").classList.remove("hidden");
+  document.getElementById("confirmTeamBtn").onclick = () => {
+    alert("Richiesta inviata al master");
   };
-  const allTeams = JSON.parse(localStorage.getItem("squadre") || "[]");
-  const filtrate = allTeams.filter(t => t.utente !== currentUser);
-  filtrate.push(squadra);
-  localStorage.setItem("squadre", JSON.stringify(filtrate));
+}
 
-  alert("Squadra inviata! In attesa di approvazione.");
-  confirmTeamBtn.classList.add("hidden");
+function aggiornaListaAdmin() {
+  const list = document.getElementById("adminTeamList");
+  list.innerHTML = "";
+  for (const [nome, dati] of Object.entries(squadre)) {
+    const li = document.createElement("li");
+    li.innerText = `${nome} - ${dati.punti} punti`;
+    const approva = document.createElement("button");
+    approva.innerText = "Approva";
+    approva.onclick = () => {
+      squadre[nome].approvata = true;
+      localStorage.setItem("squadre", JSON.stringify(squadre));
+      aggiornaClassifica();
+    };
+    const rimuovi = document.createElement("button");
+    rimuovi.innerText = "Elimina";
+    rimuovi.onclick = () => {
+      delete squadre[nome];
+      localStorage.setItem("squadre", JSON.stringify(squadre));
+      aggiornaListaAdmin();
+      aggiornaClassifica();
+    };
+    li.appendChild(approva);
+    li.appendChild(rimuovi);
+    list.appendChild(li);
+  }
+}
+
+function aggiornaClassifica() {
+  const lista = document.getElementById("classificaList");
+  lista.innerHTML = "";
+  const squadreApprovate = Object.entries(squadre).filter(([_, s]) => s.approvata);
+  squadreApprovate.sort((a, b) => b[1].punti - a[1].punti);
+  for (const [nome, dati] of squadreApprovate) {
+    const li = document.createElement("li");
+    li.innerText = `${nome}: ${dati.punti} punti`;
+    lista.appendChild(li);
+  }
+}
+
+document.getElementById("salvaBachecaBtn").addEventListener("click", () => {
+  const testo = document.getElementById("bachecaInput").value.trim();
+  if (testo) {
+    bacheca = testo;
+    localStorage.setItem("bacheca", testo);
+    document.getElementById("bachecaMessaggio").innerText = testo;
+    document.getElementById("bachecaInput").value = "";
+  }
 });
 
-function mostraSquadreAdmin() {
-  teamList.innerHTML = "";
-  const squadre = JSON.parse(localStorage.getItem("squadre") || "[]");
-
-  squadre.forEach((sq, i) => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <strong>${sq.utente}</strong><br>
-      Membri: ${sq.membri.join(", ")}<br>
-      Punti: <input type="number" value="${sq.punti}" id="punti-${i}" style="width:60px"> <br>
-      Stato: ${sq.stato}
-      <br>
-      <button onclick="approvaSquadra(${i})">Approva</button>
-      <button onclick="rifiutaSquadra(${i})">Rifiuta</button>
-      <button onclick="eliminaSquadra(${i})">Elimina</button>
-    `;
-    teamList.appendChild(div);
-  });
-}
-
-function approvaSquadra(index) {
-  const squadre = JSON.parse(localStorage.getItem("squadre") || "[]");
-  squadre[index].stato = "approvata";
-  squadre[index].punti = parseInt(document.getElementById(`punti-${index}`).value);
-  localStorage.setItem("squadre", JSON.stringify(squadre));
-  mostraSquadreAdmin();
-}
-
-function rifiutaSquadra(index) {
-  const squadre = JSON.parse(localStorage.getItem("squadre") || "[]");
-  squadre[index].stato = "rifiutata";
-  localStorage.setItem("squadre", JSON.stringify(squadre));
-  mostraSquadreAdmin();
-}
-
-function eliminaSquadra(index) {
-  let squadre = JSON.parse(localStorage.getItem("squadre") || "[]");
-  squadre.splice(index, 1);
-  localStorage.setItem("squadre", JSON.stringify(squadre));
-  mostraSquadreAdmin();
-}
-
-salvaRegolamentoBtn.addEventListener("click", () => {
-  const testo = regolamentoInput.value.trim();
-  localStorage.setItem("regolamento", testo);
-  alert("Regolamento salvato.");
-  mostraRegolamento();
+document.getElementById("homeBtn").addEventListener("click", () => {
+  document.querySelectorAll("section").forEach(sec => sec.classList.add("hidden"));
+  document.getElementById("loginSection").classList.remove("hidden");
 });
-
-function mostraRegolamento() {
-  const testo = localStorage.getItem("regolamento") || "Nessun regolamento ancora definito.";
-  regolamentoTesto.textContent = testo;
-}
-
-function mostraClassifica() {
-  classificaDiv.innerHTML = "";
-  const squadre = JSON.parse(localStorage.getItem("squadre") || "[]");
-  const approvate = squadre.filter(s => s.stato === "approvata");
-  approvate.sort((a, b) => b.punti - a.punti);
-
-  approvate.forEach(sq => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `<strong>${sq.utente}</strong><br>Punti: ${sq.punti}`;
-    classificaDiv.appendChild(div);
-  });
-}

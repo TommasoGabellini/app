@@ -3,43 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FANTA ORES 2025</title>
+  <title>Gestione Squadre</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Gioco a Squadre</h1>
 
-  <!-- Login -->
-  <div id="loginSection" class="form">
-    <input type="text" id="username" placeholder="Inserisci il tuo nome" />
+  <button id="homeBtn" class="home-button">🏠 schermata principale</button>
+
+  <section id="loginSection">
+    <h2>Accedi</h2>
+    <input type="text" id="teamNameInput" placeholder="Inserisci nome squadra o 'admin'">
     <button id="loginBtn">Entra</button>
-  </div>
+  </section>
 
-  <!-- Crea Squadra -->
-  <div id="teamSection" class="hidden">
-    <h2>Crea la tua squadra</h2>
-    <div id="cardContainer" class="grid"></div>
-    <button id="confirmTeamBtn" class="confirm hidden">Conferma Squadra</button>
-    <div class="logout">
-      <button id="logoutBtn">Logout</button>
-    </div>
-  </div>
+  <section id="teamSection" class="hidden">
+    <h2 id="teamTitle"></h2>
+    <div id="cardContainer"></div>
+    <button id="confirmTeamBtn" class="hidden">Conferma squadra</button>
+  </section>
 
-  <!-- Area Admin -->
-  <div id="adminSection" class="hidden">
-    <h2>Amministrazione</h2>
-    <div id="teamList" class="grid"></div>
-    <textarea id="regolamento" placeholder="Scrivi o modifica il regolamento..."></textarea>
-    <button id="salvaRegolamento">Salva Regolamento</button>
-  </div>
+  <section id="adminSection" class="hidden">
+    <h2>Area Admin</h2>
+    <ul id="adminTeamList"></ul>
+  </section>
 
-  <!-- Classifica -->
-  <div id="classificaSection" class="hidden">
+  <section id="classificaSection" class="hidden">
     <h2>Classifica</h2>
-    <div id="classifica" class="grid"></div>
-    <h3>Regolamento</h3>
-    <p id="regolamentoTesto"></p>
-  </div>
+    <ul id="classificaList"></ul>
+  </section>
+
+  <section id="bachecaSection" class="hidden">
+    <h2>Bacheca</h2>
+    <div id="bachecaMessaggio"></div>
+    <div id="adminBacheca" class="hidden">
+      <textarea id="bachecaInput" placeholder="Scrivi un messaggio..."></textarea>
+      <button id="salvaBachecaBtn">Salva messaggio</button>
+    </div>
+  </section>
 
   <script src="script.js"></script>
 </body>
