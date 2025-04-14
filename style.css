@@ -1,0 +1,68 @@
+body {
+  background-color: #111827;
+  color: white;
+  font-family: sans-serif;
+  padding: 20px;
+  margin: 0;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.form, .grid, .logout {
+  max-width: 500px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input, button {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+}
+
+.card {
+  background-color: #1f2937;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  background-color: #374151;
+}
+
+.card.selected {
+  border-color: #10b981;
+  background-color: #065f46;
+}
+
+.confirm {
+  background-color: #10b981;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.logout button {
+  background-color: #ef4444;
+  color: white;
+  cursor: pointer;
+}

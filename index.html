@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FANTA ORES 2025</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Gioco a Squadre</h1>
+
+  <!-- Login -->
+  <div id="loginSection" class="form">
+    <input type="text" id="username" placeholder="Inserisci il tuo nome" />
+    <button id="loginBtn">Entra</button>
+  </div>
+
+  <!-- Crea Squadra -->
+  <div id="teamSection" class="hidden">
+    <h2>Crea la tua squadra</h2>
+    <div id="cardContainer" class="grid"></div>
+    <button id="confirmTeamBtn" class="confirm hidden">Conferma Squadra</button>
+    <div class="logout">
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <!-- Area Admin -->
+  <div id="adminSection" class="hidden">
+    <h2>Amministrazione</h2>
+    <div id="teamList" class="grid"></div>
+    <textarea id="regolamento" placeholder="Scrivi o modifica il regolamento..."></textarea>
+    <button id="salvaRegolamento">Salva Regolamento</button>
+  </div>
+
+  <!-- Classifica -->
+  <div id="classificaSection" class="hidden">
+    <h2>Classifica</h2>
+    <div id="classifica" class="grid"></div>
+    <h3>Regolamento</h3>
+    <p id="regolamentoTesto"></p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
